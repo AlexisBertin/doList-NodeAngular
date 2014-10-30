@@ -1,24 +1,1 @@
-// Server.js
-
-
-	// Setup
-	var express =  require('express');
-	var app = express();
-	var mongoose = require('mongoose'); // Mongo
-	var morgan = require('morgan'); // Log request to the console
-	var bodyParser = require('body-parser'); // Pull information from HTML POST
-	var methodOverride = require('method-override'); // Simulate DELETE and PUT
-
-
-	// Configuration
-	mongoose.connect('mongodb://node:node@mongo.onmodulus.net:27017/uw03mypu');
-
-	app.use(express.static(__dirname + '/public'));
-	app.use(morgan('dev')); // Log every request to the console
-	app.use(bodyParser.urlencoded({'extended':'true'}));
-	app.use(bodyParser.json());
-	app.use(bodyParser.json({ type: 'application/vnd.api+json'}));
-	app.use(methodOverride());
-
-	app.listen(8080);
-	console.log('- App listening on port 8080 -');
+// Server.js	// Setup	var express =  require('express');	var app = express();	var mongoose = require('mongoose'); // Mongo	var morgan = require('morgan'); // Log request to the console	var bodyParser = require('body-parser'); // Pull information from HTML POST	var methodOverride = require('method-override'); // Simulate DELETE and PUT	// Configuration	mongoose.connect('mongodb://node:node@mongo.onmodulus.net:27017/uw03mypu');	app.use(express.static(__dirname + '/public'));	app.use(morgan('dev')); // Log every request to the console	app.use(bodyParser.urlencoded({'extended':'true'}));	app.use(bodyParser.json());	app.use(bodyParser.json({ type: 'application/vnd.api+json'}));	app.use(methodOverride());	// Define MODEL	var Todo = mongoose.model('Todo',{		text: String	});	// ROUTES		// Api --------------------		// get all todos		app.get('/api/todos', function(req, res){			// use mongoose to get all todos in db			Todo.find(function(err, todos){				// if there is an error retrieving, send the error. nothing after res.send(err) will execute				if(err)					res.send(err);				res.json(todos); // return all todos in json format			});		});		// create todo and send back all todos after creation		app.post('/api/todos', function(req, res){			// create todo - information comes from AJAX request from Angular			Todo.create({				text: req.body.text,				done: false			}, function(err, todos){				if(err)					res.send(err);				// get and return all the todos after one is created				Todo.find(function(err, todos){					if(err)						res.send(err);					res.json(todos);				});			});		});		// delete todo and send back all todos after delete		app.delete('/api/todos/:todo_id', function(req, res){			Todo.remove({				_id: req.params.todo_id			}, function(err, todo){				if(err)					res.send(err);				//get and return all the todos after one is deleted				Todo.find(function(err, todos){					if(err)						res.send(err);					res.json(todos);				});			});		});		// Application --------------------		app.get('*',function(req, res){			res.sendfile('./public/index.html'); // Load the main view file (Angular will handle the page changes on the front-end)		});	// Listen	app.listen(8080);	console.log('- App listening on port 8080 -');
