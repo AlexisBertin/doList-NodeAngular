@@ -1,0 +1,2 @@
+// public/core.js
+function mainController(e,t){e.formData={};t.get("/api/todos").success(function(t){e.todos=t;console.log("Success:"+t)}).error(function(e){console.log("Error: "+e)});e.createTodo=function(){t.post("/api/todos",e.formData).success(function(t){e.formData={};e.todos=t;console.log("Success: "+t)}).error(function(e){console.log("Error: "+e)})};e.deleteTodo=function(n){t.delete("/api/todo/"+n).success(function(t){e.todos=t;console.log("Success: "+t)}).error(function(e){console.log("Error: "+e)})}}var scotchTodo=angular.module("scotchTodo",[]);
